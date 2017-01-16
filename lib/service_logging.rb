@@ -17,7 +17,7 @@ module ServiceLogging
     app.config.lograge.log_level = app.config.service_logging.log_level if app.config.service_logging.log_level
     app.config.lograge.custom_options = ServiceLogging.custom_options_callback
 
-    self.filters = app.config.service_logging.filters
+    self.filters = app.config.service_logging.filters || {}
   end
 
   def custom_options_callback
