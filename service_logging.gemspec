@@ -25,4 +25,5 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "lograge"
   spec.add_runtime_dependency "logstash-event"
+  spec.add_runtime_dependency "jsonpath"
 end
