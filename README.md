@@ -1,5 +1,7 @@
 # ServiceLogging
 
+[![Build Status](https://semaphoreci.com/api/v1/projects/351e3e0b-1fc7-4569-9043-ca6299a9833f/1134046/badge.svg)](https://semaphoreci.com/savedo-ci/service_logging)
+
 Contains some common setup used around logging infrastructure in mutliple Savedo applications.
 
 ## Installation
