@@ -44,7 +44,7 @@ module ServiceLogging
     end
 
     private def log_filter
-      @log_filter ||= LogFilter.new
+      @log_filter ||= SensitiveDataJsonFilter.new(ServiceLogging.filters)
     end
   end
 end

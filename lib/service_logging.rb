@@ -1,7 +1,6 @@
 require "service_logging/version"
 require "service_logging/masking"
 require "service_logging/sensitive_data_json_filter"
-require "service_logging/log_filter"
 require "service_logging/append_info_to_payload"
 require "active_support/core_ext/module/attribute_accessors"
 
