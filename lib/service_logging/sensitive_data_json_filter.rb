@@ -78,7 +78,7 @@ module ServiceLogging
     private def filter_json_body(json, filters)
       json_path = JsonPath.for(json)
       apply_filters!(json_path, filters)
-      json_path.to_json
+      json_path.to_hash.to_json
     rescue MultiJson::ParseError, JSON::ParserError
       json
     end

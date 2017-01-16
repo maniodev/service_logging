@@ -3,6 +3,11 @@ require "service_logging/masking"
 require "service_logging/sensitive_data_json_filter"
 require "service_logging/append_info_to_payload"
 require "active_support/core_ext/module/attribute_accessors"
+require "active_support/core_ext/object/deep_dup"
+require "active_support/core_ext/string/starts_ends_with"
+require "active_support/ordered_options"
+require "jsonpath"
+require "json"
 
 module ServiceLogging
   module_function
