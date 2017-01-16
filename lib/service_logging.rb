@@ -14,7 +14,7 @@ module ServiceLogging
 
     app.config.lograge.enabled = true
     app.config.lograge.formatter = Lograge::Formatters::Logstash.new
-    app.config.lograge.log_level = :error
+    app.config.lograge.log_level = app.config.service_logging.log_level if app.config.service_logging.log_level
     app.config.lograge.custom_options = ServiceLogging.custom_options_callback
 
     self.filters = app.config.service_logging.filters
