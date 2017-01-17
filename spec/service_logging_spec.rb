@@ -13,6 +13,8 @@ RSpec.describe ServiceLogging do
     it "sets the default lograge options" do
       described_class.setup(app)
 
+      expect(described_class.enabled).to eq(true)
+
       expect(app.config.lograge.enabled).to eq(true)
       expect(app.config.lograge.formatter).to be_instance_of(Lograge::Formatters::Logstash)
       expect(app.config.lograge.custom_options).to be_instance_of(Proc)

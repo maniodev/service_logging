@@ -23,24 +23,47 @@ RSpec.describe ServiceLogging::AppendInfoToPayload do
       }
     end
 
-    it "fills payload" do
-      described_class.execute(payload, request, response)
+    context "when ServiceLogging.enabled is true" do
+      around do |example|
+        old_value = ServiceLogging.enabled
+        ServiceLogging.enabled = true
+        example.run
+        ServiceLogging.enabled = old_value
+      end
 
-      expect(payload[:request_body]).to eq pretty_json(type: "request")
-      expect(payload[:response_body]).to eq pretty_json(type: "response")
-      expect(payload[:request_headers]).to eq '{"HTTP_AUTHORIZATION":"************678"}'
-      expect(payload[:response_headers]).to eq '{"Set-Cookie":"*************234"}'
-    end
-
-    context "when invalid request and response bodies" do
-      let(:request_body) { "{reques" }
-      let(:response_body) { "response}" }
-
-      it "fills them as they are" do
+      it "fills payload" do
         described_class.execute(payload, request, response)
 
-        expect(payload[:request_body]).to eq request_body
-        expect(payload[:response_body]).to eq response_body
+        expect(payload[:request_body]).to eq pretty_json(type: "request")
+        expect(payload[:response_body]).to eq pretty_json(type: "response")
+        expect(payload[:request_headers]).to eq '{"HTTP_AUTHORIZATION":"************678"}'
+        expect(payload[:response_headers]).to eq '{"Set-Cookie":"*************234"}'
+      end
+
+      context "when invalid request and response bodies" do
+        let(:request_body) { "{reques" }
+        let(:response_body) { "response}" }
+
+        it "fills them as they are" do
+          described_class.execute(payload, request, response)
+
+          expect(payload[:request_body]).to eq request_body
+          expect(payload[:response_body]).to eq response_body
+        end
+      end
+    end
+
+    context "when ServiceLogging.enabled is false" do
+      around do |example|
+        old_value = ServiceLogging.enabled
+        ServiceLogging.enabled = false
+        example.run
+        ServiceLogging.enabled = old_value
+      end
+
+      it "doesn't do anything" do
+        expect { described_class.execute(payload, request, response) }.
+          not_to change { payload[:request_body] }
       end
     end
   end

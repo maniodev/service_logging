@@ -12,7 +12,8 @@ require "json"
 module ServiceLogging
   module_function
 
-  mattr_accessor :filters
+  mattr_accessor :enabled, :filters
+  self.enabled = false
 
   def setup(app)
     require "lograge"
@@ -23,6 +24,7 @@ module ServiceLogging
     app.config.lograge.custom_options = ServiceLogging.custom_options_callback
 
     self.filters = app.config.service_logging.filters || {}
+    self.enabled = true
   end
 
   def custom_options_callback

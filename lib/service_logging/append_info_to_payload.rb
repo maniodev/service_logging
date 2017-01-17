@@ -11,6 +11,8 @@ module ServiceLogging
     end
 
     def execute
+      return unless ServiceLogging.enabled
+
       @payload[:request_body] = request_body
       @payload[:response_body] = response_body
       @payload[:request_headers] = request_headers
