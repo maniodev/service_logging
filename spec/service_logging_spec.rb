@@ -20,6 +20,15 @@ RSpec.describe ServiceLogging do
       expect(app.config.lograge.custom_options).to be_instance_of(Proc)
     end
 
+    it "sets custom defined lograge options" do
+      app.config.service_logging.lograge = ActiveSupport::OrderedOptions.new
+      app.config.service_logging.lograge.ignore_actions = %w(SomeController#action)
+
+      described_class.setup(app)
+
+      expect(app.config.lograge.ignore_actions).to eq(%w(SomeController#action))
+    end
+
     describe "service_logging.filters" do
       before do
         app.config.service_logging.filters = filters

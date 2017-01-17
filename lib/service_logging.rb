@@ -23,6 +23,12 @@ module ServiceLogging
     app.config.lograge.log_level = app.config.service_logging.log_level if app.config.service_logging.log_level
     app.config.lograge.custom_options = ServiceLogging.custom_options_callback
 
+    if app.config.service_logging.lograge
+      app.config.service_logging.lograge.each do |option, value|
+        app.config.lograge[option] = value
+      end
+    end
+
     self.filters = app.config.service_logging.filters || {}
     self.enabled = true
   end
