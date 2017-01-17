@@ -11,7 +11,7 @@ Add these lines to your application's Gemfile:
 ```ruby
 # We use the patched version of jsonpath gem, until this PR is merged: https://github.com/joshbuddy/jsonpath/pull/39
 gem "jsonpath", git: "https://github.com/greyblake/jsonpath.git", branch: "conditions-for-children-nodes"
-gem "service_logging", git: "https://github.com/Savedo/service_logging"
+gem "service_logging", git: "https://github.com/Savedo/service_logging" # specifiy `tag: "v0.2.0"` to use a specific version
 ```
 
 And then execute:
@@ -37,7 +37,7 @@ To send custom data with payload add `append_info_to_payload` method to your con
 ```ruby
 class ApplicationController
   # ...
-  # modify Lograge method to add custom data to payload
+  # modify ActionController::Instrumentation method to add custom data to payload
   private def append_info_to_payload(payload)
     super
     payload[:customer_id] = current_customer&.id
@@ -89,6 +89,14 @@ config.service_logging.filters = {
   response_header_filters: ["Set-Cookie"],
   request_header_filters: %w(HTTP_COOKIE HTTP_AUTHORIZATION)
 }
+```
+
+#### Set any Lograge config option
+
+Do that via `config.service_logging.lograge`:
+
+```ruby
+config.service_logging.lograge.ignore_actions = %w(HomeController#index)
 ```
 
 ## Development
