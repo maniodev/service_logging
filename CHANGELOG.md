@@ -1,5 +1,7 @@
 # Change Log
 
+### 0.2.1
+* Squash route match errors to one line
 ### 0.2.0
 
 * Fix `AppendInfoToPayload` to work only if the gem is enabled in config
