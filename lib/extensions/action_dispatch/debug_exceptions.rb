@@ -1,3 +1,7 @@
+require "active_support/concern"
+require "action_dispatch/http/mime_type"
+require "action_dispatch/middleware/debug_exceptions"
+
 ActionDispatch::DebugExceptions.class_eval do
   alias_method :old_log_error, :log_error
 
