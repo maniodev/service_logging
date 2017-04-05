@@ -1,5 +1,8 @@
 # Change Log
 
+### 0.2.2
+* Support Rails 4 for route match errors
+
 ### 0.2.1
 * Squash route match errors to one line
 
