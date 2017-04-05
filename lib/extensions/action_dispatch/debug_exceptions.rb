@@ -6,8 +6,8 @@ if defined?(ActionDispatch::DebugExceptions)
       exception = wrapper.exception
       if exception.is_a?(ActionController::RoutingError)
         data = {
-          method: request.method,
-          path: request.original_fullpath,
+          method: request["REQUEST_METHOD"] || request.method,
+          path: request["REQUEST_PATH"] || request.original_fullpath,
           status: wrapper.status_code,
           error: "#{exception.class.name}: #{exception.message}"
         }
