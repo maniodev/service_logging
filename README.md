@@ -2,16 +2,14 @@
 
 [![Build Status](https://semaphoreci.com/api/v1/projects/351e3e0b-1fc7-4569-9043-ca6299a9833f/1134046/badge.svg)](https://semaphoreci.com/savedo-ci/service_logging)
 
-Contains some common setup used around logging infrastructure in mutliple Savedo applications.
+Contains some common setup used around logging infrastructure in multiple Savedo applications.
 
 ## Installation
 
 Add these lines to your application's Gemfile:
 
 ```ruby
-# We use the patched version of jsonpath gem, until this PR is merged: https://github.com/joshbuddy/jsonpath/pull/39
-gem "jsonpath", git: "https://github.com/greyblake/jsonpath.git", branch: "conditions-for-children-nodes"
-gem "service_logging", git: "https://github.com/Savedo/service_logging" # specifiy `tag: "v0.2.0"` to use a specific version
+gem "service_logging", git: "https://github.com/Savedo/service_logging" # specify `tag: "v0.2.0"` to use a specific version
 ```
 
 And then execute:
@@ -82,7 +80,7 @@ config.service_logging.filters = {
 }
 ```
 
-Additionaly, you can also filter request and response:
+Additionally, you can also filter request and response:
 
 ```ruby
 config.service_logging.filters = {
