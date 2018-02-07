@@ -1,6 +1,6 @@
 # ServiceLogging
 
-[![Build Status](https://semaphoreci.com/api/v1/projects/351e3e0b-1fc7-4569-9043-ca6299a9833f/1134046/badge.svg)](https://semaphoreci.com/savedo-ci/service_logging)
+[![](https://ci.solanolabs.com:443/savedo/service_logging/badges/branches/master?badge_token=213679f6ef1e1b521a496a77ddce1d7cf4316622)](https://ci.solanolabs.com:443/savedo/service_logging/suites/707867)
 
 Contains some common setup used around logging infrastructure in multiple Savedo applications.
 
