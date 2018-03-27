@@ -15,8 +15,7 @@ module ServiceLogging
   #   filter.filter_headers("X-TOKEN" => "abcdefgh", "Agent" => "blabla")
   #   # => { "X-TOKEN" => "*****fgh", "Agent" => "blabla" }
   class SensitiveDataJsonFilter
-    attr_reader :request_filters, :request_header_filters,
-      :response_filters, :response_header_filters
+    attr_reader :request_filters, :request_header_filters, :response_filters, :response_header_filters
 
     # @param request_filters [Array<String>] JsonPath selectors to filter request body
     # @param request_header_filters [Array<String>] names of request headers to filter

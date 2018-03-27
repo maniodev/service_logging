@@ -24,7 +24,7 @@ module ServiceLogging
       filtered_hash = log_filter.filter_request(JSON.parse(body))
       JSON.pretty_generate(filtered_hash)
     rescue JSON::ParserError
-      return body
+      body
     end
 
     private def response_body

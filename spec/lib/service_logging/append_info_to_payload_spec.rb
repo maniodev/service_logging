@@ -62,8 +62,9 @@ RSpec.describe ServiceLogging::AppendInfoToPayload do
       end
 
       it "doesn't do anything" do
-        expect { described_class.execute(payload, request, response) }.
-          not_to change { payload[:request_body] }
+        expect { described_class.execute(payload, request, response) }.not_to(
+          change { payload[:request_body] }
+        )
       end
     end
   end

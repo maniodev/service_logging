@@ -15,7 +15,7 @@ module ServiceLogging
   mattr_accessor :enabled, :filters
   self.enabled = false
 
-  def setup(app)
+  def setup(app) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     require "lograge"
     require "extensions/action_dispatch/debug_exceptions"
 
@@ -24,17 +24,15 @@ module ServiceLogging
     app.config.lograge.log_level = app.config.service_logging.log_level if app.config.service_logging.log_level
     app.config.lograge.custom_options = ServiceLogging.custom_options_callback
 
-    if app.config.service_logging.lograge
-      app.config.service_logging.lograge.each do |option, value|
-        app.config.lograge[option] = value
-      end
+    app.config.service_logging.lograge&.each do |option, value|
+      app.config.lograge[option] = value
     end
 
     self.filters = app.config.service_logging.filters || {}
     self.enabled = true
   end
 
-  def custom_options_callback
+  def custom_options_callback # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     lambda do |event|
       payload = event.payload
 
@@ -53,9 +51,7 @@ module ServiceLogging
 
       # request_body and params contain the same information, so there is need to
       # log params, if request_body already is present.
-      unless data[:request_body]
-        data[:params] = payload[:params].reject { |key, _val| key.in?(%w(controller action)) }
-      end
+      data[:params] = payload[:params].reject { |key, _val| key.in?(%w(controller action)) } unless data[:request_body]
 
       data
     end

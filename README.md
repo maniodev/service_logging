@@ -1,6 +1,5 @@
 # ServiceLogging
-
-[![](https://ci.solanolabs.com:443/savedo/service_logging/badges/branches/master?badge_token=213679f6ef1e1b521a496a77ddce1d7cf4316622)](https://ci.solanolabs.com:443/savedo/service_logging/suites/707867)
+[![Build Status](https://jenkins.savedo.de/buildStatus/icon?job=service_logging/master)](https://jenkins.savedo.de/job/service_logging/job/master/)
 
 Contains some common setup used around logging infrastructure in multiple Savedo applications.
 
@@ -9,7 +8,7 @@ Contains some common setup used around logging infrastructure in multiple Savedo
 Add these lines to your application's Gemfile:
 
 ```ruby
-gem "service_logging", git: "https://github.com/Savedo/service_logging" # specify `tag: "v0.2.0"` to use a specific version
+gem "service_logging", git: "https://github.com/Savedo/service_logging" # specify `tag: "v0.4.0"` to use a specific version
 ```
 
 And then execute:
