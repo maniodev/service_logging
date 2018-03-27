@@ -11,7 +11,7 @@ Layout/DotPosition:
 Metrics/BlockLength:
   Exclude:
     - spec/**/*
-    - servicE_logging.gemspec
+    - service_logging.gemspec
 
 Metrics/LineLength:
   Max: 150
