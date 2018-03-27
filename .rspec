@@ -1,2 +1,5 @@
---format documentation
 --color
+--format progress
+--format RspecJunitFormatter
+--out ./tmp/rspec/rspec.xml
+--require spec_helper

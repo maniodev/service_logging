@@ -2,7 +2,7 @@ if defined?(ActionDispatch::DebugExceptions)
   ActionDispatch::DebugExceptions.class_eval do
     alias_method :old_log_error, :log_error
 
-    def log_error(request, wrapper)
+    def log_error(request, wrapper) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       exception = wrapper.exception
       if exception.is_a?(ActionController::RoutingError)
         data = {

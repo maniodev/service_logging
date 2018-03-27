@@ -3,6 +3,8 @@
 .idea/
 .yardoc/
 
+.dockerignore
+.gitignore
 .rspec_status
 
 .ruby-gemset
