@@ -27,7 +27,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rubocop", "~> 0.54", ">= 0.54.0"
 
   spec.add_runtime_dependency "activesupport", ">= 4.2.10"
-  spec.add_runtime_dependency "jsonpath", "~> 0.8.0"
-  spec.add_runtime_dependency "lograge", "~> 0.9", ">= 0.9.0"
-  spec.add_runtime_dependency "logstash-event"
+  spec.add_runtime_dependency "kiev", "~> 3.0"
 end

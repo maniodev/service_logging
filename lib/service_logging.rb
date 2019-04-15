@@ -1,59 +1,39 @@
 require "service_logging/version"
-require "service_logging/masking"
-require "service_logging/sensitive_data_json_filter"
 require "service_logging/append_info_to_payload"
 require "active_support/core_ext/module/attribute_accessors"
-require "active_support/core_ext/object/deep_dup"
 require "active_support/core_ext/string/starts_ends_with"
 require "active_support/ordered_options"
-require "jsonpath"
-require "json"
+require "kiev"
 
 module ServiceLogging
   module_function
 
-  mattr_accessor :enabled, :filters
+  mattr_accessor :enabled, :app, :kiev
+
   self.enabled = false
+  self.kiev = ActiveSupport::OrderedOptions.new
 
-  def setup(app) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-    require "lograge"
-    require "extensions/action_dispatch/debug_exceptions"
-
-    app.config.lograge.enabled = true
-    app.config.lograge.formatter = Lograge::Formatters::Logstash.new
-    app.config.lograge.log_level = app.config.service_logging.log_level if app.config.service_logging.log_level
-    app.config.lograge.custom_options = ServiceLogging.custom_options_callback
-
-    app.config.service_logging.lograge&.each do |option, value|
-      app.config.lograge[option] = value
-    end
-
-    self.filters = app.config.service_logging.filters || {}
+  def setup(app) # rubocop:disable Metrics/A
     self.enabled = true
+    self.app = app.config.service_logging.app
+
+    self.kiev.enabled = app.config.service_logging.kiev.enabled || false
+    configure_kiev(app) if self.kiev.enabled
   end
 
-  def custom_options_callback # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-    lambda do |event|
-      payload = event.payload
+  def configure_kiev(app)
+    self.kiev.filtered_params = app.config.service_logging.kiev.filtered_params || []
+    self.kiev.ignored_params = app.config.service_logging.kiev.ignored_params || []
 
-      data = {}
-      custom_payload_params = Rails.application.config.service_logging.custom_payload_params
-      custom_payload_params&.each do |param|
-        data[param] = payload[param]
+    Kiev.configure do |config|
+      config.app = app.config.service_logging.app
+      config.development_mode = app.config.service_logging.kiev.development_mode
+      config.log_request_condition = proc do |request, _response|
+        !%r{(^/health)}.match(request.path)
       end
 
-      data.merge!(
-        request_body: payload[:request_body],
-        request_headers: payload[:request_headers],
-        response_body: payload[:response_body],
-        response_headers: payload[:response_headers]
-      ).reject { |_key, val| val.blank? }
-
-      # request_body and params contain the same information, so there is need to
-      # log params, if request_body already is present.
-      data[:params] = payload[:params].reject { |key, _val| key.in?(%w(controller action)) } unless data[:request_body]
-
-      data
+      config.filtered_params = Kiev::Config::FILTERED_PARAMS | self.kiev.filtered_params
+      config.ignored_params = Kiev::Config::IGNORED_PARAMS | self.kiev.ignored_params
     end
   end
 end

@@ -1,43 +1,48 @@
 require "spec_helper"
 
 RSpec.describe ServiceLogging::AppendInfoToPayload do
-  let(:payload) { {} }
+  let(:payload) { Kiev::RequestStore.store[:payload] }
 
-  let(:request_body) { '{"type":"request"}' }
-  let(:response_body) { '{"type":"response"}' }
+  let(:request_body) { '{"type":"request", "data":{"attributes":{"password":"bigsecret"}}}' }
+  let(:response_body) { '{"type":"response", "foo": "bar"}' }
   let(:request_headers) { { "HTTP_AUTHORIZATION" => "Bearer 12345678" } }
   let(:response_headers) { { "Set-Cookie" => "_session_id=1234" } }
 
   let(:request) { double("ActionDispatch::Request", body: StringIO.new(request_body), headers: request_headers) }
   let(:response) { double("ActionDispatch::Response", body: response_body, headers: response_headers) }
 
-  def pretty_json(hash)
-    JSON.pretty_generate(hash)
-  end
-
   describe ".execute" do
     before do
-      ServiceLogging.filters = {
-        request_header_filters: ["HTTP_AUTHORIZATION"],
-        response_header_filters: ["Set-Cookie"]
-      }
+      Kiev::RequestStore.store.clear
+      ServiceLogging.kiev.filtered_params = %w(HTTP_AUTHORIZATION Set-Cookie password)
+      ServiceLogging.kiev.ignored_params = %w(foo)
     end
 
     context "when ServiceLogging.enabled is true" do
       around do |example|
-        old_value = ServiceLogging.enabled
+        old_service_logging_enability_value = ServiceLogging.enabled
+        old_kiev_enability_value = ServiceLogging.kiev.enabled
         ServiceLogging.enabled = true
+        ServiceLogging.kiev.enabled = true
         example.run
-        ServiceLogging.enabled = old_value
+        ServiceLogging.enabled = old_service_logging_enability_value
+        ServiceLogging.kiev.enabled = old_kiev_enability_value
       end
 
       it "fills payload" do
-        described_class.execute(payload, request, response)
+        described_class.execute(request, response)
 
-        expect(payload[:request_body]).to eq pretty_json(type: "request")
-        expect(payload[:response_body]).to eq pretty_json(type: "response")
-        expect(payload[:request_headers]).to eq '{"HTTP_AUTHORIZATION":"************678"}'
-        expect(payload[:response_headers]).to eq '{"Set-Cookie":"*************234"}'
+        expect(payload[:request_body]).to eq({
+          "type" => "request",
+          "data" => {
+            "attributes" => {
+              "password" => "[FILTERED]"
+            }
+          }
+        })
+        expect(payload[:response_body]).to eq({ "type" => "response" })
+        expect(payload[:request_headers]).to eq({ "HTTP_AUTHORIZATION" => "[FILTERED]" })
+        expect(payload[:response_headers]).to eq({ "Set-Cookie" => "[FILTERED]" })
       end
 
       context "when invalid request and response bodies" do
@@ -45,10 +50,24 @@ RSpec.describe ServiceLogging::AppendInfoToPayload do
         let(:response_body) { "response}" }
 
         it "fills them as they are" do
-          described_class.execute(payload, request, response)
+          described_class.execute(request, response)
 
           expect(payload[:request_body]).to eq request_body
           expect(payload[:response_body]).to eq response_body
+        end
+      end
+
+      context "when ServiceLogging.kiev.enabled is false" do
+        around do |example|
+          old_kiev_enability_value = ServiceLogging.kiev.enabled
+          ServiceLogging.kiev.enabled = false
+          example.run
+          ServiceLogging.kiev.enabled = old_kiev_enability_value
+        end
+
+        it "doesn't add data to payload" do
+          described_class.execute(request, response)
+          expect(payload).to be_nil
         end
       end
     end
@@ -61,10 +80,9 @@ RSpec.describe ServiceLogging::AppendInfoToPayload do
         ServiceLogging.enabled = old_value
       end
 
-      it "doesn't do anything" do
-        expect { described_class.execute(payload, request, response) }.not_to(
-          change { payload[:request_body] }
-        )
+      it "doesn't add data to payload" do
+        described_class.execute(request, response)
+        expect(payload).to be_nil
       end
     end
   end
