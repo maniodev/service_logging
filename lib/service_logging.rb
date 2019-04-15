@@ -13,17 +13,17 @@ module ServiceLogging
   self.enabled = false
   self.kiev = ActiveSupport::OrderedOptions.new
 
-  def setup(app) # rubocop:disable Metrics/A
+  def setup(app)
     self.enabled = true
     self.app = app.config.service_logging.app
 
-    self.kiev.enabled = app.config.service_logging.kiev.enabled || false
-    configure_kiev(app) if self.kiev.enabled
+    kiev.enabled = app.config.service_logging.kiev.enabled || false
+    configure_kiev(app) if kiev.enabled
   end
 
-  def configure_kiev(app)
-    self.kiev.filtered_params = app.config.service_logging.kiev.filtered_params || []
-    self.kiev.ignored_params = app.config.service_logging.kiev.ignored_params || []
+  def configure_kiev(app) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    kiev.filtered_params = app.config.service_logging.kiev.filtered_params || []
+    kiev.ignored_params = app.config.service_logging.kiev.ignored_params || []
 
     Kiev.configure do |config|
       config.app = app.config.service_logging.app
@@ -32,8 +32,8 @@ module ServiceLogging
         !%r{(^/health)}.match(request.path)
       end
 
-      config.filtered_params = Kiev::Config::FILTERED_PARAMS | self.kiev.filtered_params
-      config.ignored_params = Kiev::Config::IGNORED_PARAMS | self.kiev.ignored_params
+      config.filtered_params = Kiev::Config::FILTERED_PARAMS | kiev.filtered_params
+      config.ignored_params = Kiev::Config::IGNORED_PARAMS | kiev.ignored_params
     end
   end
 end

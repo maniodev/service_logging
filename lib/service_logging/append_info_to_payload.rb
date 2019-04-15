@@ -22,13 +22,15 @@ module ServiceLogging
 
     private def request_body
       body = @request.body.read
-      log_filter(JSON.parse(body))
+      filtered_hash = log_filter(JSON.parse(body))
+      JSON.pretty_generate(filtered_hash)
     rescue JSON::ParserError
       body
     end
 
     private def response_body
-      log_filter(JSON.parse(@response.body))
+      filtered_hash = log_filter(JSON.parse(@response.body))
+      JSON.pretty_generate(filtered_hash)
     rescue JSON::ParserError
       @response.body
     end

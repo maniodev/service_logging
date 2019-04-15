@@ -11,6 +11,10 @@ RSpec.describe ServiceLogging::AppendInfoToPayload do
   let(:request) { double("ActionDispatch::Request", body: StringIO.new(request_body), headers: request_headers) }
   let(:response) { double("ActionDispatch::Response", body: response_body, headers: response_headers) }
 
+  def pretty_json(hash)
+    JSON.pretty_generate(hash)
+  end
+
   describe ".execute" do
     before do
       Kiev::RequestStore.store.clear
@@ -32,17 +36,13 @@ RSpec.describe ServiceLogging::AppendInfoToPayload do
       it "fills payload" do
         described_class.execute(request, response)
 
-        expect(payload[:request_body]).to eq({
-          "type" => "request",
-          "data" => {
-            "attributes" => {
-              "password" => "[FILTERED]"
-            }
-          }
-        })
-        expect(payload[:response_body]).to eq({ "type" => "response" })
-        expect(payload[:request_headers]).to eq({ "HTTP_AUTHORIZATION" => "[FILTERED]" })
-        expect(payload[:response_headers]).to eq({ "Set-Cookie" => "[FILTERED]" })
+        expect(payload[:request_body]).to eq pretty_json(
+          type: "request",
+          data: { attributes: { password: "[FILTERED]" } }
+        )
+        expect(payload[:response_body]).to eq pretty_json(type: "response")
+        expect(payload[:request_headers]).to eq("HTTP_AUTHORIZATION" => "[FILTERED]")
+        expect(payload[:response_headers]).to eq("Set-Cookie" => "[FILTERED]")
       end
 
       context "when invalid request and response bodies" do
