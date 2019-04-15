@@ -40,7 +40,7 @@ module ServiceLogging
     # Extract HTTP request headers. Rack changes names of real headers, but original
     # headers passed to the server, start with "HTTP_".
     private def request_headers
-      http_headers = @request.headers.find_all { |header, _| header.starts_with?("HTTP_") }.to_h
+      http_headers = @request.headers.find_all { |header, _| header.to_s.starts_with?("HTTP_") }.to_h
       log_filter(http_headers)
     end
 
